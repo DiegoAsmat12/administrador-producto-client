@@ -1,23 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import Formulario from './Componentes/Formulario/Formulario';
+import axios from 'axios';
+import { useState } from 'react';
 
-function App() {
+const productoInicial = {
+  titulo:"",
+  precio:0,
+  descripcion:"",
+}
+
+
+const App = () => {
+
+  const [nuevoProducto,setNuevoProducto] = useState(productoInicial);
+
+  const crearProducto = (e) =>{
+    e.preventDefault();
+    if(nuevoProducto.titulo && nuevoProducto.precio>=0 && nuevoProducto.descripcion){
+      axios.post("http://localhost:8080/api/productos",nuevoProducto)
+        .then( productoCreado => console.log(productoCreado))
+        .catch(err => console.log(err));
+  
+      setNuevoProducto(productoInicial);
+    }
+  }
+
+  const modificarNuevoProducto = (e) =>{
+    setNuevoProducto({
+      ...nuevoProducto,
+      [e.target.id]:e.target.value
+    });
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Formulario nuevoProducto={nuevoProducto} crearProducto={crearProducto} modificarNuevoProducto={modificarNuevoProducto}/>
     </div>
   );
 }
